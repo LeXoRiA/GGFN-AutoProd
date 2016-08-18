@@ -1,8 +1,8 @@
 package Productions;
 
 import io.appium.java_client.android.AndroidDriver;
-import org.opencv.core.Mat;
-import org.opencv.core.Size;
+import nu.pattern.OpenCV;
+import org.opencv.core.*;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 import org.openqa.selenium.OutputType;
@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by ShotGum on 17.8.2016.
+ * Created by ShotGum on 17.8.2016
  * GitHub: LeXoRiA
  */
 
@@ -139,6 +139,188 @@ public abstract class Helpers {
 
         return resizedCannyStr;
     } //end resizeCanny
+
+
+
+
+    /* Match template and image and then click/swipe */
+    public void Canny(String cannyTemplate, String cannyImage, String cannyGray, String cannyCannyied, String cannyResized, String cannyResult,
+                      String cannyOut, AndroidDriver _driver2) throws Exception
+    {
+        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+        OpenCV.loadShared();
+
+        /*Keep Appium alive*/
+        _driver2.getOrientation();
+
+        String cannyTemplateStr = screenshotDirectory + cannyTemplate;
+        String cannyImageStr = screenshotDirectory + cannyImage;
+        String cannyGrayStr = screenshotDirectory + cannyGray;
+        String cannyCannyiedStr = screenshotDirectory + cannyCannyied;
+        String cannyResizedStr = screenshotDirectory + cannyResized;
+        String cannyResultStr = screenshotDirectory + cannyResult;
+        String cannyOutStr = screenshotDirectory + cannyOut;
+
+        /* Variables for linspace */
+        double linStart;
+        double linEnd;
+        double counter;
+        double space;
+
+        /* Read template, convert it to gray and Canny it */
+        Mat cannyTemplateMat = Highgui.imread(cannyTemplateStr);
+
+        Imgproc.cvtColor(cannyTemplateMat, cannyTemplateMat, Imgproc.COLOR_BGR2GRAY);
+        Highgui.imwrite(cannyTemplateStr, cannyTemplateMat);
+
+        Imgproc.Canny(cannyTemplateMat, cannyTemplateMat, 50, 200);
+        Highgui.imwrite(cannyTemplateStr, cannyTemplateMat);
+
+        Mat templateMatchMat = Highgui.imread(cannyTemplateStr);
+
+        /* Get Height and Width of template image */
+        int tH = Highgui.imread(cannyTemplateStr).height();
+        int tW = Highgui.imread(cannyTemplateStr).width();
+
+        /* Start counter */
+        int ctr = 0;
+
+        /* Read image and convert it to gray */
+        Mat cannyImageMat = Highgui.imread(cannyImageStr);
+        Mat imgGryMat = Highgui.imread(cannyImageStr);
+
+        Imgproc.cvtColor(cannyImageMat, imgGryMat, Imgproc.COLOR_BGR2GRAY);
+        Highgui.imwrite(cannyGrayStr, imgGryMat);
+
+        /* Some parameters to use in every turn of for loop */
+        double[] found = new double[4];
+        Point mLoc = null;
+        double mVal = 0;
+        float r = 0;
+
+        /* Values for linspace and for loop */
+        linStart = 1.0;
+        linEnd = 0.2;
+        counter = 20;
+        space = (linStart - linEnd) / counter;
+
+        /* For loop. The mothership of the script */
+        for (double scale = linStart; scale >= linEnd; scale = scale - space)
+        {
+            /* Keep Appium alive */
+            _driver2.getOrientation();
+
+            /* Get H and W of grayed image. And multiply the width with scale for multi-scale */
+            int gryW = Highgui.imread(cannyGrayStr).width();
+            double newWidth = gryW * scale;
+            int gryH = Highgui.imread(cannyGrayStr).height();
+
+            /* Change the name for easy use in resizeCanny() function */
+            cannyCannyied = cannyGray;
+
+            /* Start resizeCanny function. It resizes the image to Canny and match for later */
+            resizeCanny(cannyCannyied, cannyResized, cannyResult, (int) newWidth, gryH, Imgproc.INTER_AREA);
+
+            /* Get H and W of resized image */
+            int rszH = Highgui.imread(cannyResizedStr).height();
+            int rszW = Highgui.imread(cannyResizedStr).width();
+
+            /* r = (grayed image's width)/(resized image's width) */
+            r = gryW / (float) rszW;
+
+            /* If resized image is smaller than template, then break */
+            if (rszH < tH || rszW < tW)
+            {
+                break;
+            }
+
+            /* Some matrix conversion */
+            Mat cannyResizedMat = Highgui.imread(cannyResizedStr);
+            String edged = cannyResizedStr;
+            Mat edgedMat = Highgui.imread(edged);
+
+            /* Canny and write the image that has been resized */
+            Imgproc.Canny(cannyResizedMat, edgedMat, 50, 200);
+            Highgui.imwrite(cannyResultStr, edgedMat);
+
+            /* Some matrix conversions */
+            Mat cannyResultMat = Highgui.imread(cannyResultStr);
+            String matchResult = cannyResultStr;
+            Mat matchResultMat = Highgui.imread(matchResult);
+
+            Mat matchTemplateMat = Highgui.imread(cannyTemplateStr);
+
+            /* Match Canny'd template and Canny'd image */
+            Imgproc.matchTemplate(cannyResultMat, matchTemplateMat, matchResultMat, Imgproc.TM_CCOEFF_NORMED); // was templateMatchMat
+
+            /* Get maximum value and maximum location */
+            Core.MinMaxLocResult mmrValues = Core.minMaxLoc(matchResultMat);
+            mLoc = mmrValues.maxLoc;
+            mVal = mmrValues.maxVal;
+
+            /* If found array is empty maximum value is bigger than previous max value, then update the variables */
+            if (found == null || mVal > found[0])
+            {
+                found[0] = mVal;
+                found[1] = mLoc.x;
+                found[2] = mLoc.y;
+                found[3] = (double) r;
+
+                System.out.println("maxVal (IF): " + mVal);
+            } // end if
+
+            else {
+                System.out.println("maxVal (ELSE): " + mVal);
+            }
+        } //end for
+
+        if (found[0] < 0.50 || found[0] > 1.00)
+        {
+            log("Match not found!");
+            log("Ending the test!");
+            _driver2.quit();
+        }
+
+
+        /* After for loop; update maximum location pointers (x,y) with found array to choose/show */
+        mLoc.x = found[1];
+        mLoc.y = found[2];
+        r = (float) found[3];
+
+        /* Found template's edges */
+        int startX, startY;
+        startX = (int) ((mLoc.x) * r);
+        startY = (int) ((mLoc.y) * r);
+        int endX, endY;
+        endX = (int) ((mLoc.x + tW) * r);
+        endY = (int) ((mLoc.y + tH) * r);
+
+        log("startX, startY: " + startX + " : " + startY);
+
+        /*Keep Appium alive*/
+        _driver2.getOrientation();
+
+
+        // Draw rectangle on match.
+        Core.rectangle(cannyImageMat, new Point(startX, startY), new Point(endX, endY), new Scalar(0, 0, 255));
+
+        // Write the matched imaged to show if it's true or not.
+        log("Writing image as " + cannyOut);
+        Highgui.imwrite(cannyOutStr, cannyImageMat);
+
+
+        if (startX == 0 && startY == 0){
+            log("Coordinates: 0,0");
+            log("Ending the test!");
+            _driver2.quit();
+        }
+
+        /* Make your move */
+        _driver2.tap(1, startX, startY, 250);
+
+        return;
+    } //end Canny
+
 
 
 

@@ -4,3 +4,11 @@ destinationFile (from saveImage) > saveImageDest
 imageCanny (from resizeCanny) > resizeCannyImage
 resizedCanny (from resizeCanny) > resizedCanny
 resultCanny (from resizeCanny) > resizeCannyResult
+template (from Canny) > cannyTemplate
+image (from Canny) > cannyImage
+imageGray (from Canny) > cannyGray
+imageCanny (from Canny) > cannyCannyied
+resizedCanny (from Canny) > cannyResized
+resultCanny (from Canny) > cannyResult
+matchCase (from Canny) > matchCase
+outFile (from Canny) > cannyOut
