@@ -1,0 +1,6 @@
+name (from takeScreenshot) > ssName
+imageUrl (from saveImage) > saveImageUrl
+destinationFile (from saveImage) > saveImageDest
+imageCanny (from resizeCanny) > resizeCannyImage
+resizedCanny (from resizeCanny) > resizedCanny
+resultCanny (from resizeCanny) > resizeCannyResult
