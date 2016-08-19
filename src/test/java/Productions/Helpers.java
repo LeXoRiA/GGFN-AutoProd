@@ -2,6 +2,9 @@ package Productions;
 
 import io.appium.java_client.android.AndroidDriver;
 import nu.pattern.OpenCV;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.opencv.core.*;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
@@ -9,10 +12,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -322,8 +322,94 @@ public abstract class Helpers {
     } //end Canny
 
 
+    public void actionStations(String fileName, AndroidDriver _driver2) throws Exception
+    {
+        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+
+        try
+        {
+            String jsonFile = screenshotDirectory + "/" + fileName;
+            URL link = new URL("https://s3.amazonaws.com/infosfer-ab-test/jsonfiles/" + fileName + ".json");
+
+            /* Download JSON file and read it */
+            InputStream in = new BufferedInputStream(link.openStream());
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            int q = 0;
+            while (-1 != (q = in.read(buf)))
+            {
+                out.write(buf, 0, q);
+            }
+            out.close();
+            in.close();
+            byte[] response = out.toByteArray();
+
+            FileOutputStream fos = new FileOutputStream(jsonFile);
+            fos.write(response);
+            fos.close();
+            /* Got JSON */
+
+            log("JSON File has been saved!");
+
+            /* Keep Appium alive */
+            _driver2.getOrientation();
+
+            /* Parse JSON file */
+            FileReader reader = new FileReader(jsonFile);
+            JSONParser parser = new JSONParser();
+            Object obj = parser.parse(reader);
+
+            JSONObject jsonObject = (JSONObject) obj;
+            JSONArray functionList = (JSONArray) jsonObject.get("Functions");
+
+            /* Get objects from JSON */
+            int n = 0;
+            while (n < functionList.size())
+            {
+                JSONObject jObject = (JSONObject) functionList.get(n);
+
+                /* If image recognition is needed, then make this happen */
+
+                    log("IR action started");
+
+                    /* Get necessary variables from JSON */
+                    String ssName = (String) jObject.get("screenshotNameObj");
+                    String saveImageUrlObj = (String) jObject.get("imageURLObj");
+                    String saveImageUrl = "http://infosfer-ab-test.s3-website-us-east-1.amazonaws.com/tmpics/" + (String) jObject.get("imageURLObj") + ".png";
+                    String saveImageDest = screenshotDirectory + "/" + jObject.get("destinationImageObj") + ".png";
+                    String cannyTemplate = "/" + (String) jObject.get("templateNameObj") + ".png";
+                    String cannyImage = "/" + (String) jObject.get("sourceNameObj") + ".png";
+                    String cannyGray = "/" + (String) jObject.get("grayedSourceObj") + ".png";
+                    String cannyCannyied = "/" + (String) jObject.get("cannySourceObj") + ".png";
+                    String cannyResized = "/" + (String) jObject.get("resizedCannyObj") + ".png";
+                    String cannyResult = "/" + (String) jObject.get("cannyResultObj") + ".png";
+                    String cannyOut = "/" + (String) jObject.get("outImageObj") + ".png";
+                    long seconds = (Long) jObject.get("sleepTimeObj");
+                    int second = (int) seconds;
+
+                    /* Do the thing */
+                    takeScreenshot(ssName, _driver2);
+                    log("Screenshot captured");
+                    saveImage(saveImageUrl, saveImageDest, _driver2);
+                    log("Template has been saved from server");
+                    Canny(cannyTemplate, cannyImage, cannyGray, cannyCannyied, cannyResized, cannyResult, cannyOut, _driver2);
+                    n++;
+
+                    log("Action done (IR)");
+                    second = second + 1;
+                    sleep(second);
+
+
+                /* If on-board action is needed, then make this happen */
+            } //end while
+        } //end try
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    } //end actionStation
 
 
 
-}
+} //end class
 
