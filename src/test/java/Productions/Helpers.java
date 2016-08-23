@@ -1,7 +1,6 @@
 package Productions;
 
 import io.appium.java_client.android.AndroidDriver;
-import nu.pattern.OpenCV;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -63,8 +62,12 @@ public abstract class Helpers {
         /* Keep Appium alive */
         _driver2.getOrientation();
 
+        /* Local */
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
 
-        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+        /* Remote */
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+
         File screenshot = ((TakesScreenshot) _driver2).getScreenshotAs(OutputType.FILE);
         return screenshot.renameTo(new File(screenshotDirectory, String.format("/%s.png", ssName)));
     }
@@ -72,7 +75,11 @@ public abstract class Helpers {
     /* Save image from URL (AWS S3) */
     public void saveImage(String saveImageUrl, String saveImageDest, AndroidDriver _driver2) throws Exception
     {
-        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+        /* Local */
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+
+        /* Remote */
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
 
         URL url = new URL(saveImageUrl);
         InputStream is = url.openStream();
@@ -95,7 +102,11 @@ public abstract class Helpers {
     /* Resize image to Canny and match */
     public String resizeCanny(String resizeCannyImage, String resizedCanny, String resizeCannyResult, int width, int height, int inter) throws Exception
     {
-        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+        /* Local */
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+
+        /* Remote */
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
 
         String resizeCannyImageStr = screenshotDirectory + resizeCannyImage;
         String resizedCannyStr = screenshotDirectory + resizedCanny;
@@ -147,8 +158,15 @@ public abstract class Helpers {
     public void Canny(String cannyTemplate, String cannyImage, String cannyGray, String cannyCannyied, String cannyResized, String cannyResult,
                       String cannyOut, AndroidDriver _driver2) throws Exception
     {
-        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
-        OpenCV.loadShared();
+        /* Local */
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
+
+        /* Remote */
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+//        OpenCV.loadShared();
+
 
         /*Keep Appium alive*/
         _driver2.getOrientation();
@@ -274,12 +292,12 @@ public abstract class Helpers {
             }
         } //end for
 
-        if (found[0] < 0.50 || found[0] > 1.00)
-        {
-            log("Match not found!");
-            log("Ending the test!");
-            _driver2.quit();
-        }
+//        if (found[0] < 0.50 || found[0] > 1.00)
+//        {
+//            log("Match not found!");
+//            log("Ending the test!");
+//            _driver2.quit();
+//        }
 
 
         /* After for loop; update maximum location pointers (x,y) with found array to choose/show */
@@ -316,7 +334,11 @@ public abstract class Helpers {
         }
 
         /* Make your move */
-        _driver2.tap(1, startX, startY, 250);
+
+        int tapPointX, tapPointY;
+        tapPointX = (startX + endX)/2 ;
+        tapPointY = (startY + endY)/2;
+        _driver2.tap(1, tapPointX, tapPointY, 250);
 
         return;
     } //end Canny
@@ -324,7 +346,11 @@ public abstract class Helpers {
 
     public void actionStations(String fileName, AndroidDriver _driver2) throws Exception
     {
-        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+        /* Local */
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+
+        /* Remote */
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
 
         try
         {
@@ -375,7 +401,7 @@ public abstract class Helpers {
                     /* Get necessary variables from JSON */
                     String ssName = (String) jObject.get("screenshotNameObj");
                     String saveImageUrlObj = (String) jObject.get("imageURLObj");
-                    String saveImageUrl = "http://infosfer-ab-test.s3-website-us-east-1.amazonaws.com/tmpics/" + (String) jObject.get("imageURLObj") + ".png";
+                    String saveImageUrl = "http://infosfer-ab-test.s3-website-us-east-1.amazonaws.com/prods/" + (String) jObject.get("imageURLObj") + ".png";
                     String saveImageDest = screenshotDirectory + "/" + jObject.get("destinationImageObj") + ".png";
                     String cannyTemplate = "/" + (String) jObject.get("templateNameObj") + ".png";
                     String cannyImage = "/" + (String) jObject.get("sourceNameObj") + ".png";
@@ -399,8 +425,6 @@ public abstract class Helpers {
                     second = second + 1;
                     sleep(second);
 
-
-                /* If on-board action is needed, then make this happen */
             } //end while
         } //end try
         catch (Exception e)
