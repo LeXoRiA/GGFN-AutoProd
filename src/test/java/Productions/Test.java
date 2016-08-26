@@ -52,7 +52,6 @@ public class Test extends Helpers
         driver.getOrientation();
         sleep(15);
         driver.getOrientation();
-        sleep(15);
         log("Application is ready!");
 
 
@@ -63,7 +62,7 @@ public class Test extends Helpers
 
 
         /* Flasgship */
-        actionStations("ProdDemo", driver);
+        actionStations("Demo", driver);
 
         /* Take screenshot to see the last situation */
         takeScreenshot("last", driver);

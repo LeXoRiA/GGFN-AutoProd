@@ -292,6 +292,9 @@ public abstract class Helpers {
             }
         } //end for
 
+
+
+
 //        if (found[0] < 0.50 || found[0] > 1.00)
 //        {
 //            log("Match not found!");
@@ -396,22 +399,54 @@ public abstract class Helpers {
 
                 /* If image recognition is needed, then make this happen */
 
-                    log("IR action started");
+                log("IR action started");
 
-                    /* Get necessary variables from JSON */
-                    String ssName = (String) jObject.get("screenshotNameObj");
-                    String saveImageUrlObj = (String) jObject.get("imageURLObj");
-                    String saveImageUrl = "http://infosfer-ab-test.s3-website-us-east-1.amazonaws.com/prods/" + (String) jObject.get("imageURLObj") + ".png";
-                    String saveImageDest = screenshotDirectory + "/" + jObject.get("destinationImageObj") + ".png";
-                    String cannyTemplate = "/" + (String) jObject.get("templateNameObj") + ".png";
-                    String cannyImage = "/" + (String) jObject.get("sourceNameObj") + ".png";
-                    String cannyGray = "/" + (String) jObject.get("grayedSourceObj") + ".png";
-                    String cannyCannyied = "/" + (String) jObject.get("cannySourceObj") + ".png";
-                    String cannyResized = "/" + (String) jObject.get("resizedCannyObj") + ".png";
-                    String cannyResult = "/" + (String) jObject.get("cannyResultObj") + ".png";
-                    String cannyOut = "/" + (String) jObject.get("outImageObj") + ".png";
-                    long seconds = (Long) jObject.get("sleepTimeObj");
-                    int second = (int) seconds;
+                /* Get necessary variables from JSON */
+                String functionName = (String) jObject.get("functionName");
+                String ssName = (String) jObject.get("screenshotNameObj");
+                String saveImageUrlObj = (String) jObject.get("imageURLObj");
+                String saveImageUrl = "http://infosfer-ab-test.s3-website-us-east-1.amazonaws.com/prods/" + (String) jObject.get("imageURLObj") + ".png";
+                String saveImageDest = screenshotDirectory + "/" + jObject.get("destinationImageObj") + ".png";
+                String cannyTemplate = "/" + (String) jObject.get("templateNameObj") + ".png";
+                String cannyImage = "/" + (String) jObject.get("sourceNameObj") + ".png";
+                String cannyGray = "/" + (String) jObject.get("grayedSourceObj") + ".png";
+                String cannyCannyied = "/" + (String) jObject.get("cannySourceObj") + ".png";
+                String cannyResized = "/" + (String) jObject.get("resizedCannyObj") + ".png";
+                String cannyResult = "/" + (String) jObject.get("cannyResultObj") + ".png";
+                String cannyOut = "/" + (String) jObject.get("outImageObj") + ".png";
+                long seconds = (Long) jObject.get("sleepTimeObj");
+                int second = (int) seconds;
+
+                /* Ignore native dialog */
+//                _driver2.switchTo().alert().dismiss();
+
+
+
+                if (functionName.equalsIgnoreCase("backHard"))
+                {
+                    _driver2.pressKeyCode(4);
+                    n++;
+                    log("Action done");
+                    second = second + 1;
+                    sleep (second);
+                    takeScreenshot(ssName, _driver2);
+
+                }
+
+//                if (functionName.equalsIgnoreCase("nativeYes"))
+//                {
+//                    _driver2.tap(1, _driver2.findElementByLinkText("Yes"), 250);
+//
+//                }
+//
+//                else if (functionName.equalsIgnoreCase("nativeBuy"))
+//                {
+//                    _driver2.tap(1, _driver2.findElementByName("Buy"), 250);
+//                }
+
+
+            else
+                {
 
                     /* Do the thing */
                     takeScreenshot(ssName, _driver2);
@@ -419,11 +454,13 @@ public abstract class Helpers {
                     saveImage(saveImageUrl, saveImageDest, _driver2);
                     log("Template has been saved from server");
                     Canny(cannyTemplate, cannyImage, cannyGray, cannyCannyied, cannyResized, cannyResult, cannyOut, _driver2);
-                    n++;
-
+                    log("n value: " + n);
                     log("Action done (IR)");
                     second = second + 1;
                     sleep(second);
+                    takeScreenshot("Step" + n, _driver2);
+                    n++;
+                }
 
             } //end while
         } //end try
