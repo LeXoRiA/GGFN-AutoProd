@@ -13,7 +13,6 @@ import java.net.URL;
  */
 public class Test extends Helpers
 {
-
     private AndroidDriver driver;
 
     @Before
@@ -27,14 +26,10 @@ public class Test extends Helpers
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("deviceName", "Android Emulator");
         capabilities.setCapability("platformVersion", "4.1");
-//        File appDir = new File("C:/Python27/");
-//        File app = new File(appDir, "Chess.apk");
-//        capabilities.setCapability("app", app);
         capabilities.setCapability("appPackage", "com.boombit.CopsAndRobbers");
         capabilities.setCapability("appActivity", "com.prime31.UnityPlayerNativeActivity");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
-
 
 
         /* Remote */
@@ -54,13 +49,11 @@ public class Test extends Helpers
         driver.getOrientation();
         log("Application is ready!");
 
-
         /* Local */
         String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+
         /* Remote */
 //        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
-
-
 
 
         /* Flasgship */
@@ -78,6 +71,4 @@ public class Test extends Helpers
         log("Application closed");
         log("Test done!");
     }
-
-
 }

@@ -31,8 +31,6 @@ public abstract class Helpers {
     private static WebDriverWait driverWait;
     public static String screenshotsFolder;
 
-
-
     public static void init(AndroidDriver webDriver, URL driverServerAddress) {
         driver = webDriver;
         serverAddress = driverServerAddress;
@@ -42,13 +40,8 @@ public abstract class Helpers {
         driverWait = new WebDriverWait(webDriver, timeoutInSeconds);
     }
 
-
-
-    // STARTS HERE //
-
-
+    // EVERYTHING STARTS HERE //
     double selectedScale;
-
 
     public void log(String msg)
     {
@@ -104,7 +97,6 @@ public abstract class Helpers {
         return;
     }
 
-
     /* Resize image to Canny and match */
     public String resizeCanny(String resizeCannyImage, String resizedCanny, String resizeCannyResult, int width, int height, int inter) throws Exception
     {
@@ -157,9 +149,6 @@ public abstract class Helpers {
         return resizedCannyStr;
     } //end resizeCanny
 
-
-
-
     /* Match template and image and then click/swipe */
     public void CannyForSpaceSelection(String cannyTemplate, String cannyImage, String cannyGray, String cannyCannyied, String cannyResized, String cannyResult,
                       String cannyOut, AndroidDriver _driver2) throws Exception
@@ -168,11 +157,9 @@ public abstract class Helpers {
         String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-
         /* Remote */
 //        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
 //        OpenCV.loadShared();
-
 
         /*Keep Appium alive*/
         _driver2.getOrientation();
@@ -229,8 +216,6 @@ public abstract class Helpers {
         space = (linStart - linEnd) / counter;
 
         List<Double> scaleArray = new ArrayList<Double>();
-
-
 
         /* For loop. The mothership of the script */
         for (double scale = linStart; scale >= linEnd; scale = scale - space)
@@ -334,7 +319,6 @@ public abstract class Helpers {
         /*Keep Appium alive*/
         _driver2.getOrientation();
 
-
         // Draw rectangle on match.
         Core.rectangle(cannyImageMat, new Point(startX, startY), new Point(endX, endY), new Scalar(0, 0, 255));
 
@@ -345,12 +329,6 @@ public abstract class Helpers {
         return;
     } //end CannyForSpaceSelection
 
-
-
-
-
-
-
     /* Match template and image and then click/swipe */
     public void Canny(String cannyTemplate, String cannyImage, String cannyGray, String cannyCannyied, String cannyResized, String cannyResult,
                                        String cannyOut, AndroidDriver _driver2) throws Exception
@@ -359,11 +337,9 @@ public abstract class Helpers {
         String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-
         /* Remote */
 //        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
 //        OpenCV.loadShared();
-
 
         /*Keep Appium alive*/
         _driver2.getOrientation();
@@ -413,14 +389,6 @@ public abstract class Helpers {
         double mVal = 0;
         float r = 0;
 
-        /* Values for linspace and for loop */
-        linStart = 1.0;
-        linEnd = 0.2;
-        counter = 20;
-
-
-
-
         /* Keep Appium alive */
         _driver2.getOrientation();
 
@@ -441,7 +409,6 @@ public abstract class Helpers {
 
         /* r = (grayed image's width)/(resized image's width) */
         r = gryW / (float) rszW;
-
 
         /* Some matrix conversion */
         Mat cannyResizedMat = Highgui.imread(cannyResizedStr);
@@ -474,17 +441,12 @@ public abstract class Helpers {
 
         System.out.println("maxVal (selectedScale): " + mVal);
 
-
-
 //        if (found[0] < 0.40 || found[0] > 1.00)
 //        {
 //            log("Match not found!");
 //            log("Ending the test!");
 //            _driver2.quit();
 //        }
-
-
-
 
         /* After for loop; update maximum location pointers (x,y) with found array to choose/show */
         mLoc.x = found[1];
@@ -504,14 +466,12 @@ public abstract class Helpers {
         /*Keep Appium alive*/
         _driver2.getOrientation();
 
-
         // Draw rectangle on match.
         Core.rectangle(cannyImageMat, new Point(startX, startY), new Point(endX, endY), new Scalar(0, 0, 255));
 
         // Write the matched imaged to show if it's true or not.
         log("Writing image as " + cannyOut);
         Highgui.imwrite(cannyOutStr, cannyImageMat);
-
 
         if (startX == 0 && startY == 0){
             log("Coordinates: 0,0");
@@ -520,7 +480,6 @@ public abstract class Helpers {
         }
 
         /* Make your move */
-
         int tapPointX, tapPointY;
         tapPointX = (startX + endX)/2 ;
         tapPointY = (startY + endY)/2;
@@ -528,11 +487,6 @@ public abstract class Helpers {
 
         return;
     } //end Canny
-
-
-
-
-
 
     public void actionStations(String fileName, AndroidDriver _driver2) throws Exception
     {
@@ -578,15 +532,11 @@ public abstract class Helpers {
             JSONObject jsonObject = (JSONObject) obj;
             JSONArray functionList = (JSONArray) jsonObject.get("Functions");
 
-
-
             /* Get objects from JSON */
             int n = 0;
             while (n < functionList.size())
             {
                 JSONObject jObject = (JSONObject) functionList.get(n);
-
-                /* If image recognition is needed, then make this happen */
 
                 log("IR action started");
 
@@ -609,13 +559,6 @@ public abstract class Helpers {
                 /* Ignore native dialog */
 //                _driver2.switchTo().alert().dismiss();
 
-
-
-
-
-
-
-
                 if (functionName.equalsIgnoreCase("selectscale"))
                 {
                     takeScreenshot(ssName, _driver2);
@@ -630,7 +573,6 @@ public abstract class Helpers {
                     sleep(second);
                     takeScreenshot("Step" + n, _driver2);
                     n++;
-
                 }
 
 //                if (functionName.equalsIgnoreCase("nativeYes"))
@@ -643,7 +585,6 @@ public abstract class Helpers {
 //                {
 //                    _driver2.tap(1, _driver2.findElementByName("Buy"), 250);
 //                }
-
 
             else
                 {
@@ -661,7 +602,6 @@ public abstract class Helpers {
                     takeScreenshot("Step" + n, _driver2);
                     n++;
                 }
-
             } //end while
         } //end try
         catch (Exception e)
@@ -669,8 +609,5 @@ public abstract class Helpers {
             e.printStackTrace();
         }
     } //end actionStation
-
-
-
 } //end class
 
