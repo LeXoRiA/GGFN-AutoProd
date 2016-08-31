@@ -575,21 +575,8 @@ public abstract class Helpers {
                     n++;
                 }
 
-//                if (functionName.equalsIgnoreCase("nativeYes"))
-//                {
-//                    _driver2.tap(1, _driver2.findElementByLinkText("Yes"), 250);
-//
-//                }
-//
-//                else if (functionName.equalsIgnoreCase("nativeBuy"))
-//                {
-//                    _driver2.tap(1, _driver2.findElementByName("Buy"), 250);
-//                }
-
-            else
+                else
                 {
-
-                    /* Do the thing */
                     takeScreenshot(ssName, _driver2);
                     log("Screenshot captured");
                     saveImage(saveImageUrl, saveImageDest, _driver2);

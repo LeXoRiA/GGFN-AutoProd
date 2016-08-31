@@ -31,7 +31,6 @@ public class Test extends Helpers
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 
-
         /* Remote */
 //        driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), new DesiredCapabilities());
     }
@@ -54,7 +53,6 @@ public class Test extends Helpers
 
         /* Remote */
 //        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
-
 
         /* Flasgship */
         actionStations("Demo", driver);
