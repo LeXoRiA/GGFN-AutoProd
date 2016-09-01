@@ -28,6 +28,7 @@ public class Test extends Helpers
         capabilities.setCapability("platformVersion", "4.1");
         capabilities.setCapability("appPackage", "com.boombit.CopsAndRobbers");
         capabilities.setCapability("appActivity", "com.prime31.UnityPlayerNativeActivity");
+        capabilities.setCapability("autoDismissAlerts", true);
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 

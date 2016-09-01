@@ -7,6 +7,7 @@ import org.json.simple.parser.JSONParser;
 import org.opencv.core.*;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
+import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -212,7 +213,7 @@ public abstract class Helpers {
         /* Values for linspace and for loop */
         linStart = 1.0;
         linEnd = 0.1;
-        counter = 90;
+        counter = 120;
         space = (linStart - linEnd) / counter;
 
         List<Double> scaleArray = new ArrayList<Double>();
@@ -573,22 +574,66 @@ public abstract class Helpers {
                     sleep(second);
                     takeScreenshot("Step" + n, _driver2);
                     n++;
-                }
+                } //end if
 
                 else
                 {
-                    takeScreenshot(ssName, _driver2);
-                    log("Screenshot captured");
-                    saveImage(saveImageUrl, saveImageDest, _driver2);
-                    log("Template has been saved from server");
-                    Canny(cannyTemplate, cannyImage, cannyGray, cannyCannyied, cannyResized, cannyResult, cannyOut, _driver2);
-                    log("n value: " + n);
-                    log("Action done (IR)");
-                    second = second + 1;
-                    sleep(second);
-                    takeScreenshot("Step" + n, _driver2);
-                    n++;
-                }
+
+                    if (functionName.equalsIgnoreCase("googleplaylogin"))
+                    {
+                        _driver2.getOrientation();
+                        sleep(5);
+                        takeScreenshot("login_step1", _driver2);
+                        _driver2.findElement(By.id("com.google.android.gsf.login:id/next_button")).click();
+                        sleep(3);
+
+                        takeScreenshot("login_step2", _driver2);
+                        _driver2.findElement(By.id("com.google.android.gsf.login:id/username_edit")).sendKeys("ekrem.erol@infosfer.com");
+                        sleep(3);
+
+                        takeScreenshot("login_step3", _driver2);
+                        _driver2.findElement(By.id("com.google.android.gsf.login:id/password_edit")).sendKeys("pinXmoQ12");
+                        sleep(3);
+
+                        takeScreenshot("login_step4", _driver2);
+                        _driver2.findElement(By.id("com.google.android.gsf.login:id/next_button")).click();
+                        sleep(3);
+
+                        takeScreenshot("login_step5", _driver2);
+                        _driver2.findElement(By.id("android:id/button1")).click();
+                        sleep(5);
+
+                        takeScreenshot("login_step6", _driver2);
+                        _driver2.findElement(By.id("com.google.android.gsf.login:id/agree_backup")).click();
+                        sleep(3);
+
+                        takeScreenshot("login_step7", _driver2);
+                        _driver2.findElement(By.id("com.google.android.gsf.login:id/next_button")).click();
+                        sleep(15);
+                        _driver2.getOrientation();
+                        sleep(15);
+                        _driver2.getOrientation();
+
+                        takeScreenshot("LogIn success!", _driver2);
+                        n++;
+
+                    } //end if
+
+                    else
+                    {
+                        takeScreenshot(ssName, _driver2);
+                        log("Screenshot captured");
+                        saveImage(saveImageUrl, saveImageDest, _driver2);
+                        log("Template has been saved from server");
+                        Canny(cannyTemplate, cannyImage, cannyGray, cannyCannyied, cannyResized, cannyResult, cannyOut, _driver2);
+                        log("n value: " + n);
+                        log("Action done (IR)");
+                        second = second + 1;
+                        sleep(second);
+                        takeScreenshot("Step" + n, _driver2);
+                        n++;
+                    } //end else
+                } //end else
             } //end while
         } //end try
         catch (Exception e)
