@@ -1,6 +1,7 @@
 package Productions;
 
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidKeyCode;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -213,7 +214,7 @@ public abstract class Helpers {
         /* Values for linspace and for loop */
         linStart = 1.0;
         linEnd = 0.1;
-        counter = 120;
+        counter = 90;
         space = (linStart - linEnd) / counter;
 
         List<Double> scaleArray = new ArrayList<Double>();
@@ -613,8 +614,22 @@ public abstract class Helpers {
                         _driver2.getOrientation();
                         sleep(15);
                         _driver2.getOrientation();
+                        sleep(15);
+                        _driver2.getOrientation();
+                        sleep(15);
+                        _driver2.getOrientation();
+                        sleep(15);
+                        _driver2.getOrientation();
+                        sleep(15);
+                        _driver2.getOrientation();
 
-                        takeScreenshot("LogIn success!", _driver2);
+                        takeScreenshot("LogInsuccess!", _driver2);
+
+                        _driver2.pressKeyCode(AndroidKeyCode.BACK);
+                        log("Ad Closed");
+                        takeScreenshot("AdClosed", _driver2);
+                        sleep(5);
+
                         n++;
 
                     } //end if
