@@ -20,20 +20,20 @@ public class Test extends Helpers
     {
         /* Local */
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-
-        capabilities.setCapability("appium-version", "1.4.13");
-        capabilities.setCapability("platformName", "Android");
-        capabilities.setCapability("deviceName", "Android Emulator");
-        capabilities.setCapability("platformVersion", "4.1");
-        capabilities.setCapability("appPackage", "com.boombit.CopsAndRobbers");
-        capabilities.setCapability("appActivity", "com.prime31.UnityPlayerNativeActivity");
-        capabilities.setCapability("autoDismissAlerts", true);
-
-        driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+//        DesiredCapabilities capabilities = new DesiredCapabilities();
+//
+//        capabilities.setCapability("appium-version", "1.4.13");
+//        capabilities.setCapability("platformName", "Android");
+//        capabilities.setCapability("deviceName", "Android Emulator");
+//        capabilities.setCapability("platformVersion", "4.1");
+//        capabilities.setCapability("appPackage", "com.boombit.CopsAndRobbers");
+//        capabilities.setCapability("appActivity", "com.prime31.UnityPlayerNativeActivity");
+//        capabilities.setCapability("autoDismissAlerts", true);
+//
+//        driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 
         /* Remote */
-//        driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), new DesiredCapabilities());
+        driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), new DesiredCapabilities());
     }
 
     @org.junit.Test
@@ -50,10 +50,10 @@ public class Test extends Helpers
         log("Application is ready!");
 
         /* Local */
-        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+//        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
 
         /* Remote */
-//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
 
         /* Flasgship */
         actionStations("Demo", driver);
