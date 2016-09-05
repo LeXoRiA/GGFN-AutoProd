@@ -2,7 +2,6 @@ package Productions;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidKeyCode;
-import nu.pattern.OpenCV;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -65,10 +64,10 @@ public abstract class Helpers {
         _driver2.getOrientation();
 
         /* Local */
-//        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
 
         /* Remote */
-        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
 
         File screenshot = ((TakesScreenshot) _driver2).getScreenshotAs(OutputType.FILE);
         return screenshot.renameTo(new File(screenshotDirectory, String.format("/%s.png", ssName)));
@@ -78,10 +77,10 @@ public abstract class Helpers {
     public void saveImage(String saveImageUrl, String saveImageDest, AndroidDriver _driver2) throws Exception
     {
         /* Local */
-//        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
 
         /* Remote */
-        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
 
         URL url = new URL(saveImageUrl);
         InputStream is = url.openStream();
@@ -104,10 +103,10 @@ public abstract class Helpers {
     public String resizeCanny(String resizeCannyImage, String resizedCanny, String resizeCannyResult, int width, int height, int inter) throws Exception
     {
         /* Local */
-//        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
 
         /* Remote */
-        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
 
         String resizeCannyImageStr = screenshotDirectory + resizeCannyImage;
         String resizedCannyStr = screenshotDirectory + resizedCanny;
@@ -157,12 +156,12 @@ public abstract class Helpers {
                       String cannyOut, AndroidDriver _driver2) throws Exception
     {
         /* Local */
-//        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
-//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
         /* Remote */
-        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
-        OpenCV.loadShared();
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+//        OpenCV.loadShared();
 
         /*Keep Appium alive*/
         _driver2.getOrientation();
@@ -337,12 +336,12 @@ public abstract class Helpers {
                                        String cannyOut, AndroidDriver _driver2) throws Exception
     {
         /* Local */
-//        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
-//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
         /* Remote */
-        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
-        OpenCV.loadShared();
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+//        OpenCV.loadShared();
 
         /*Keep Appium alive*/
         _driver2.getOrientation();
@@ -354,12 +353,6 @@ public abstract class Helpers {
         String cannyResizedStr = screenshotDirectory + cannyResized;
         String cannyResultStr = screenshotDirectory + cannyResult;
         String cannyOutStr = screenshotDirectory + cannyOut;
-
-        /* Variables for linspace */
-        double linStart;
-        double linEnd;
-        double counter;
-        double space;
 
         /* Read template, convert it to gray and Canny it */
         Mat cannyTemplateMat = Highgui.imread(cannyTemplateStr);
@@ -494,10 +487,10 @@ public abstract class Helpers {
     public void actionStations(String fileName, AndroidDriver _driver2) throws Exception
     {
         /* Local */
-//        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
 
         /* Remote */
-        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
 
         try
         {
@@ -559,9 +552,6 @@ public abstract class Helpers {
                 long seconds = (Long) jObject.get("sleepTimeObj");
                 int second = (int) seconds;
 
-                /* Ignore native dialog */
-//                _driver2.switchTo().alert().dismiss();
-
                 if (functionName.equalsIgnoreCase("selectscale"))
                 {
                     takeScreenshot(ssName, _driver2);
@@ -580,7 +570,6 @@ public abstract class Helpers {
 
                 else
                 {
-
                     if (functionName.equalsIgnoreCase("googleplaylogin"))
                     {
                         _driver2.getOrientation();
