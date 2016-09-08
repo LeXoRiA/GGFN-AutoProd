@@ -331,6 +331,165 @@ public abstract class Helpers {
         return;
     } //end CannyForSpaceSelection
 
+
+    /* Find FLAGS */
+    public void findFlag(String cannyTemplate, String cannyImage, String cannyGray, String cannyCannyied, String cannyResized, String cannyResult,
+                      String cannyOut, AndroidDriver _driver2) throws Exception
+    {
+        /* Local */
+        String screenshotDirectory = "C:/Users/qa1/Desktop/ms_test";
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
+        /* Remote */
+//        String screenshotDirectory = System.getProperty("appium.screenshots.dir", System.getProperty("java.io.tmpdir", ""));
+//        OpenCV.loadShared();
+
+        /*Keep Appium alive*/
+        _driver2.getOrientation();
+
+        String cannyTemplateStr = screenshotDirectory + cannyTemplate;
+        String cannyImageStr = screenshotDirectory + cannyImage;
+        String cannyGrayStr = screenshotDirectory + cannyGray;
+        String cannyCannyiedStr = screenshotDirectory + cannyCannyied;
+        String cannyResizedStr = screenshotDirectory + cannyResized;
+        String cannyResultStr = screenshotDirectory + cannyResult;
+        String cannyOutStr = screenshotDirectory + cannyOut;
+
+        /* Read template, convert it to gray and Canny it */
+        Mat cannyTemplateMat = Highgui.imread(cannyTemplateStr);
+
+//        Imgproc.cvtColor(cannyTemplateMat, cannyTemplateMat, Imgproc.COLOR_BGR2GRAY);
+//        Imgproc.cvtColor(cannyTemplateMat, cannyTemplateMat, Imgproc.COLOR_BGR2HSV);
+        Highgui.imwrite(cannyTemplateStr, cannyTemplateMat);
+
+//        Imgproc.Canny(cannyTemplateMat, cannyTemplateMat, 50, 200);
+//        Highgui.imwrite(cannyTemplateStr, cannyTemplateMat);
+
+        Mat templateMatchMat = Highgui.imread(cannyTemplateStr);
+
+        /* Get Height and Width of template image */
+        int tH = Highgui.imread(cannyTemplateStr).height();
+        int tW = Highgui.imread(cannyTemplateStr).width();
+
+
+        /* Read image and convert it to gray */
+        Mat cannyImageMat = Highgui.imread(cannyImageStr);
+        Mat imgGryMat = Highgui.imread(cannyImageStr);
+
+//        Imgproc.cvtColor(cannyImageMat, imgGryMat, Imgproc.COLOR_BGR2GRAY);
+//        Imgproc.cvtColor(cannyImageMat, imgGryMat, Imgproc.COLOR_BGR2HSV);
+        Highgui.imwrite(cannyGrayStr, imgGryMat);
+
+        /* Some parameters to use in every turn of for loop */
+        double[] found = new double[4];
+        Point mLoc = null;
+        double mVal = 0;
+        float r = 0;
+
+        /* Keep Appium alive */
+        _driver2.getOrientation();
+
+        /* Get H and W of grayed image. And multiply the width with scale for multi-scale */
+        int gryW = Highgui.imread(cannyGrayStr).width();
+        double newWidth = gryW * selectedScale;
+        int gryH = Highgui.imread(cannyGrayStr).height();
+
+        /* Change the name for easy use in resizeCanny() function */
+        cannyCannyied = cannyGray;
+
+        /* Start resizeCanny function. It resizes the image to Canny and match for later */
+        resizeCanny(cannyCannyied, cannyResized, cannyResult, (int) newWidth, gryH, Imgproc.INTER_AREA);
+
+        /* Get H and W of resized image */
+        int rszH = Highgui.imread(cannyResizedStr).height();
+        int rszW = Highgui.imread(cannyResizedStr).width();
+
+        /* r = (grayed image's width)/(resized image's width) */
+        r = gryW / (float) rszW;
+
+        /* Some matrix conversion */
+        Mat cannyResizedMat = Highgui.imread(cannyResizedStr);
+        String edged = cannyResizedStr;
+        Mat edgedMat = Highgui.imread(edged);
+
+        cannyResizedMat = edgedMat;
+
+        /* Canny and write the image that has been resized */
+//        Imgproc.Canny(cannyResizedMat, edgedMat, 50, 200);
+        Highgui.imwrite(cannyResultStr, edgedMat);
+
+        /* Some matrix conversions */
+        Mat cannyResultMat = Highgui.imread(cannyResultStr);
+        String matchResult = cannyResultStr;
+        Mat matchResultMat = Highgui.imread(matchResult);
+
+        Mat matchTemplateMat = Highgui.imread(cannyTemplateStr);
+
+        /* Match Canny'd template and Canny'd image */
+        Imgproc.matchTemplate(cannyResultMat, matchTemplateMat, matchResultMat, Imgproc.TM_CCOEFF_NORMED);
+
+        /* Get maximum value and maximum location */
+        Core.MinMaxLocResult mmrValues = Core.minMaxLoc(matchResultMat);
+        mLoc = mmrValues.maxLoc;
+        mVal = mmrValues.maxVal;
+
+        found[0] = mVal;
+        found[1] = mLoc.x;
+        found[2] = mLoc.y;
+        found[3] = (double) r;
+
+        System.out.println("maxVal (selectedScale): " + mVal);
+
+//        if (found[0] < 0.40 || found[0] > 1.00)
+//        {
+//            log("Match not found!");
+//            log("Ending the test!");
+//            _driver2.quit();
+//        }
+
+        /* After for loop; update maximum location pointers (x,y) with found array to choose/show */
+        mLoc.x = found[1];
+        mLoc.y = found[2];
+        r = (float) found[3];
+
+        /* Found template's edges */
+        int startX, startY;
+        startX = (int) ((mLoc.x) * r);
+        startY = (int) ((mLoc.y) * r);
+        int endX, endY;
+        endX = (int) ((mLoc.x + tW) * r);
+        endY = (int) ((mLoc.y + tH) * r);
+
+        log("startX, startY: " + startX + " : " + startY);
+
+        /*Keep Appium alive*/
+        _driver2.getOrientation();
+
+        // Draw rectangle on match.
+        Core.rectangle(cannyImageMat, new Point(startX, startY), new Point(endX, endY), new Scalar(0, 0, 255));
+
+        // Write the matched imaged to show if it's true or not.
+        log("Writing image as " + cannyOut);
+        Highgui.imwrite(cannyOutStr, cannyImageMat);
+
+        if (startX == 0 && startY == 0){
+            log("Coordinates: 0,0");
+            log("Ending the test!");
+            _driver2.quit();
+        }
+
+        /* Make your move */
+        int tapPointX, tapPointY;
+        tapPointX = (startX + endX)/2 ;
+        tapPointY = (startY + endY)/2;
+        _driver2.tap(1, tapPointX, tapPointY, 250);
+
+        return;
+    } //end Canny
+
+
+
+
     /* Match template and image and then click/swipe */
     public void Canny(String cannyTemplate, String cannyImage, String cannyGray, String cannyCannyied, String cannyResized, String cannyResult,
                                        String cannyOut, AndroidDriver _driver2) throws Exception
@@ -540,7 +699,7 @@ public abstract class Helpers {
                 String functionName = (String) jObject.get("functionName");
                 String ssName = (String) jObject.get("screenshotNameObj");
                 String saveImageUrlObj = (String) jObject.get("imageURLObj");
-                String saveImageUrl = "http://infosfer-ab-test.s3-website-us-east-1.amazonaws.com/prods/" + (String) jObject.get("imageURLObj") + ".png";
+                String saveImageUrl = "http://infosfer-ab-test.s3-website-us-east-1.amazonaws.com/flags/" + (String) jObject.get("imageURLObj") + ".png";
                 String saveImageDest = screenshotDirectory + "/" + jObject.get("destinationImageObj") + ".png";
                 String cannyTemplate = "/" + (String) jObject.get("templateNameObj") + ".png";
                 String cannyImage = "/" + (String) jObject.get("sourceNameObj") + ".png";
@@ -563,7 +722,8 @@ public abstract class Helpers {
                     log("n value: " + n);
                     log("Action done (IR)");
                     second = second + 1;
-                    sleep(second);
+                    sleep(15);
+                    _driver2.getOrientation();
                     takeScreenshot("Step" + n, _driver2);
                     n++;
                 } //end if
@@ -623,6 +783,22 @@ public abstract class Helpers {
                         n++;
 
                     } //end if
+
+                    else if (functionName.equalsIgnoreCase("language"))
+                    {
+                        takeScreenshot(ssName, _driver2);
+                        log("Screenshot captured");
+                        saveImage(saveImageUrl, saveImageDest, _driver2);
+                        log("Template has been saved from server");
+                        findFlag(cannyTemplate, cannyImage, cannyGray, cannyCannyied, cannyResized, cannyResult, cannyOut, _driver2);
+                        log("n value: " + n);
+                        log("Action done (IR)");
+                        second = second + 1;
+                        sleep(second);
+                        takeScreenshot("Step" + n, _driver2);
+                        n++;
+                    }
+
 
                     else
                     {
