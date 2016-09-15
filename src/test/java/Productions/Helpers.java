@@ -332,8 +332,8 @@ public abstract class Helpers {
     } //end CannyForSpaceSelection
 
 
-    /* Find FLAGS */
-    public void findFlag(String cannyTemplate, String cannyImage, String cannyGray, String cannyCannyied, String cannyResized, String cannyResult,
+    /* Find Languages for Localization Testing */
+    public void findLanguage(String cannyTemplate, String cannyImage, String cannyGray, String cannyCannyied, String cannyResized, String cannyResult,
                       String cannyOut, AndroidDriver _driver2) throws Exception
     {
         /* Local */
@@ -357,27 +357,17 @@ public abstract class Helpers {
 
         /* Read template, convert it to gray and Canny it */
         Mat cannyTemplateMat = Highgui.imread(cannyTemplateStr);
-
-//        Imgproc.cvtColor(cannyTemplateMat, cannyTemplateMat, Imgproc.COLOR_BGR2GRAY);
-//        Imgproc.cvtColor(cannyTemplateMat, cannyTemplateMat, Imgproc.COLOR_BGR2HSV);
         Highgui.imwrite(cannyTemplateStr, cannyTemplateMat);
-
-//        Imgproc.Canny(cannyTemplateMat, cannyTemplateMat, 50, 200);
-//        Highgui.imwrite(cannyTemplateStr, cannyTemplateMat);
-
         Mat templateMatchMat = Highgui.imread(cannyTemplateStr);
 
         /* Get Height and Width of template image */
         int tH = Highgui.imread(cannyTemplateStr).height();
         int tW = Highgui.imread(cannyTemplateStr).width();
 
-
         /* Read image and convert it to gray */
         Mat cannyImageMat = Highgui.imread(cannyImageStr);
         Mat imgGryMat = Highgui.imread(cannyImageStr);
 
-//        Imgproc.cvtColor(cannyImageMat, imgGryMat, Imgproc.COLOR_BGR2GRAY);
-//        Imgproc.cvtColor(cannyImageMat, imgGryMat, Imgproc.COLOR_BGR2HSV);
         Highgui.imwrite(cannyGrayStr, imgGryMat);
 
         /* Some parameters to use in every turn of for loop */
@@ -415,7 +405,6 @@ public abstract class Helpers {
         cannyResizedMat = edgedMat;
 
         /* Canny and write the image that has been resized */
-//        Imgproc.Canny(cannyResizedMat, edgedMat, 50, 200);
         Highgui.imwrite(cannyResultStr, edgedMat);
 
         /* Some matrix conversions */
@@ -485,9 +474,7 @@ public abstract class Helpers {
         _driver2.tap(1, tapPointX, tapPointY, 250);
 
         return;
-    } //end Canny
-
-
+    } //end findLanguage
 
 
     /* Match template and image and then click/swipe */
@@ -699,7 +686,7 @@ public abstract class Helpers {
                 String functionName = (String) jObject.get("functionName");
                 String ssName = (String) jObject.get("screenshotNameObj");
                 String saveImageUrlObj = (String) jObject.get("imageURLObj");
-                String saveImageUrl = "http://infosfer-ab-test.s3-website-us-east-1.amazonaws.com/flags/" + (String) jObject.get("imageURLObj") + ".png";
+                String saveImageUrl = "http://infosfer-ab-test.s3-website-us-east-1.amazonaws.com/languages/" + (String) jObject.get("imageURLObj") + ".png";
                 String saveImageDest = screenshotDirectory + "/" + jObject.get("destinationImageObj") + ".png";
                 String cannyTemplate = "/" + (String) jObject.get("templateNameObj") + ".png";
                 String cannyImage = "/" + (String) jObject.get("sourceNameObj") + ".png";
@@ -790,7 +777,7 @@ public abstract class Helpers {
                         log("Screenshot captured");
                         saveImage(saveImageUrl, saveImageDest, _driver2);
                         log("Template has been saved from server");
-                        findFlag(cannyTemplate, cannyImage, cannyGray, cannyCannyied, cannyResized, cannyResult, cannyOut, _driver2);
+                        findLanguage(cannyTemplate, cannyImage, cannyGray, cannyCannyied, cannyResized, cannyResult, cannyOut, _driver2);
                         log("n value: " + n);
                         log("Action done (IR)");
                         second = second + 1;
@@ -798,7 +785,6 @@ public abstract class Helpers {
                         takeScreenshot("Step" + n, _driver2);
                         n++;
                     }
-
 
                     else
                     {
